@@ -1,0 +1,18 @@
+package com.settlement.demo.settlement.mapper.slave;
+
+import com.settlement.demo.settlement.domain.entity.SettlementEntity;
+import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+
+@Mapper
+public interface SettlementSlaveMapper {
+
+    /**
+     * 정산하기 데이터 목록 조회
+     * @param userId 조회 요청 사용자 ID
+     * @return 사용자 ID에 해당하는 '정산하기' 데이터 목록
+     */
+    List<SettlementEntity> selectSettlementsByUserId(String userId);
+
+}
