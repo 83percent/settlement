@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.settlement.demo.settlement.mapper.slave.SettlementSlaveMapper">
+
+    <select id="selectSettlementByUserId"
+            parameterType="String"
+            resultType="com.settlement.demo.settlement.domain.entity.SettlementEntity">
+        /* SettlementSlaveMapper.selectSettlementByUserId UserId로 정산하기 조회 */
+        SELECT settlement_id
+             , target_user_id
+             , amount
+             , settlement_status_cd
+          FROM settlement
+         WHERE targetUserId = #{userId jdbcType=VARCHAR}
+    </select>
+
+</mapper>
