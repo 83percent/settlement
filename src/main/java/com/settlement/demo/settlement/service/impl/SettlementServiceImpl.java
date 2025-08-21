@@ -29,10 +29,10 @@ public class SettlementServiceImpl implements SettlementService {
      */
     public List<SettlementDTO> selectAllSettlements(String userId) {
 
-        /** 1. 정상하기 데이터 조회 **/
+        //// STEP 1. 정상하기 데이터 조회
         List<SettlementEntity> settlementEntityList = this.settlementSlaveMapper.selectSettlementsByUserId(userId);
 
-        /** 2. DTO Convert **/
+        //// STEP 2 DTO Convert
         Map<String, SettlementDTO> settlementDTOMap = new HashMap<>();
         settlementEntityList.forEach(element -> {
             String settlementId = element.getSettlementId();
@@ -80,18 +80,18 @@ public class SettlementServiceImpl implements SettlementService {
      */
     public void createSettlement(String userId, SettlementDTO settlementCreateDTO) {
 
-        /** 1. 정산 대상의 유효성 확인 **/
+        //// STEP 1. 정산 대상의 유효성 확인
         settlementCreateDTO.getTargetList().forEach(element -> {
             // TODO : 정산 대상의 유효성 확인 로직 구현
             // userId가 실제 유효한 Id인지 확인
 
         });
 
-        /** 정산 ID 생성 **/
+        //// STEP 2. 정산 ID 생성
         String settlementId = SettlementIdGenerator.generate();
         settlementCreateDTO.setSettlementId(settlementId);
 
-        /** 생성 **/
+        //// STEP 3. 생성
         // TODO : 생성
 
     }
