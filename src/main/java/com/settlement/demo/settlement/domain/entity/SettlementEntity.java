@@ -12,11 +12,11 @@ public class SettlementEntity {
     private String settlementId;
 
     @Schema(title = "정산하기 대상 유저 ID")
-    private String userId;
+    private String targetUserId;
 
     @Schema(title = "정산하기 금액", description = "정산하기 요청 받은 금액", example = "100000")
     private Integer amount;
 
-    @Schema(title = "정산여부", examples = {"Y", "N"})
-    private String settleYn;
+    @Schema(title = "정산 상태", examples = {"WAT", "CMP"})
+    private String settlement_status_cd;
 }
