@@ -1,8 +1,8 @@
 package com.settlement.demo.settlement.service.impl;
 
 import com.settlement.demo.settlement.domain.dto.SettlementDTO;
+import com.settlement.demo.settlement.domain.dto.SettlementTargetDTO;
 import com.settlement.demo.settlement.domain.entity.SettlementEntity;
-import com.settlement.demo.settlement.mapper.master.SettlementMasterMapper;
 import com.settlement.demo.settlement.mapper.slave.SettlementSlaveMapper;
 import com.settlement.demo.settlement.service.SettlementService;
 import com.settlement.demo.settlement.util.SettlementIdGenerator;
@@ -10,7 +10,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -26,12 +29,36 @@ public class SettlementServiceImpl implements SettlementService {
      */
     public List<SettlementDTO> selectAllSettlements(String userId) {
 
-        /** 1. 정상하기 데이터 조회 **/
+        //// STEP 1. 정상하기 데이터 조회
         List<SettlementEntity> settlementEntityList = this.settlementSlaveMapper.selectSettlementsByUserId(userId);
 
-        /** 2. DTO Convert **/
+        //// STEP 2 DTO Convert
+        Map<String, SettlementDTO> settlementDTOMap = new HashMap<>();
+        settlementEntityList.forEach(element -> {
+            String settlementId = element.getSettlementId();
 
-        return null;
+            if(!settlementDTOMap.containsKey(settlementId)) {
+                SettlementDTO settlementDTO =
+                        SettlementDTO.builder()
+                            .settlementId   (settlementId       )
+                            .createUserId   (userId             )
+                            .totalAmout     (0                  )
+                            .targetList     (new ArrayList<>()  )
+                            .build();
+
+                settlementDTOMap.put(settlementId, settlementDTO);
+            }
+
+            SettlementTargetDTO targetDTO = SettlementTargetDTO.builder()
+                    .userId(element.getTargetUserId())
+                    .amount(element.getAmount())
+                    .build();
+
+            settlementDTOMap.get(settlementId).getTargetList().add(targetDTO);
+
+        });
+
+        return new ArrayList<>(settlementDTOMap.values());
     }
 
     /**
@@ -53,18 +80,18 @@ public class SettlementServiceImpl implements SettlementService {
      */
     public void createSettlement(String userId, SettlementDTO settlementCreateDTO) {
 
-        /** 1. 정산 대상의 유효성 확인 **/
+        //// STEP 1. 정산 대상의 유효성 확인
         settlementCreateDTO.getTargetList().forEach(element -> {
             // TODO : 정산 대상의 유효성 확인 로직 구현
             // userId가 실제 유효한 Id인지 확인
 
         });
 
-        /** 정산 ID 생성 **/
+        //// STEP 2. 정산 ID 생성
         String settlementId = SettlementIdGenerator.generate();
         settlementCreateDTO.setSettlementId(settlementId);
 
-        /** 생성 **/
+        //// STEP 3. 생성
         // TODO : 생성
 
     }

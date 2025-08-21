@@ -1,11 +1,13 @@
 package com.settlement.demo.settlement.domain.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
 public class SettlementTargetDTO {
 
     @Schema(title = "사용자 ID", description = "정산 대상 사용자의 ID")
