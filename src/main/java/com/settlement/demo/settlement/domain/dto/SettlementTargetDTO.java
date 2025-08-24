@@ -15,4 +15,7 @@ public class SettlementTargetDTO {
 
     @Schema(title = "정산 금액", description = "정산 대상 사용자의 정산 금액", example = "10000")
     private Integer amount;
+
+    @Schema(title = "정산 상태", examples = {"WAT", "CMP"})
+    private String settlementStatusCd;
 }
