@@ -1,11 +1,12 @@
 package com.settlement.demo.settlement.util;
 
+import java.util.UUID;
+
 public class SettlementIdGenerator {
 
     static final String PREFIX = "SETTLEMENT-";
 
     public static String generate() {
-        // TODO : 정산 아이디 생성을 위한 로직 구현
-        return PREFIX + System.currentTimeMillis();
+        return PREFIX + UUID.randomUUID();
     }
 }

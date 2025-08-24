@@ -1,5 +1,8 @@
 package com.settlement.demo.settlement.service.impl;
 
+import com.settlement.demo.common.exception.BizException;
+import com.settlement.demo.settlement.biz.SettlementConvertor;
+import com.settlement.demo.settlement.biz.SettlementDataBiz;
 import com.settlement.demo.settlement.domain.dto.SettlementDTO;
 import com.settlement.demo.settlement.domain.dto.SettlementTargetDTO;
 import com.settlement.demo.settlement.domain.entity.SettlementEntity;
@@ -8,17 +11,18 @@ import com.settlement.demo.settlement.service.SettlementService;
 import com.settlement.demo.settlement.util.SettlementIdGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class SettlementServiceImpl implements SettlementService {
+
+    private final SettlementDataBiz     settlementDataBiz;
+    private final SettlementConvertor   settlementConvertor;
 
     private final SettlementSlaveMapper settlementSlaveMapper;
 
@@ -68,9 +72,19 @@ public class SettlementServiceImpl implements SettlementService {
      * @return 사용자 ID와 Settlement ID에 해당하는 '정산하기' 데이터
      */
     public SettlementDTO selectSettlementById(String userId, String settlementId) {
-        // TODO : Settlement ID를 기반으로 '정산하기' 데이터 조회 및 반환
+        //// STEP 1. 정산하기 조회
+        List<SettlementEntity> settlementEntityList = settlementSlaveMapper.selectSettlementsById(
+                SettlementEntity.builder()
+                        .createUserId(userId)
+                        .settlementId(settlementId)
+                        .build()
+        );
 
-        return null;
+        //// RESULT:  404 NOT FOUND
+        if(settlementEntityList.isEmpty())
+            throw new NoSuchElementException("Settlement ID not found: " + settlementId);
+
+        return this.settlementConvertor.convertEntityToDTO(settlementEntityList).get(0);
     }
 
     /**
@@ -81,18 +95,50 @@ public class SettlementServiceImpl implements SettlementService {
     public void createSettlement(String userId, SettlementDTO settlementCreateDTO) {
 
         //// STEP 1. 정산 대상의 유효성 확인
-        settlementCreateDTO.getTargetList().forEach(element -> {
-            // TODO : 정산 대상의 유효성 확인 로직 구현
-            // userId가 실제 유효한 Id인지 확인
-
-        });
+        if(!userId.equals(settlementCreateDTO.getCreateUserId()))
+            throw new AccessDeniedException("User ID mismatch");
 
         //// STEP 2. 정산 ID 생성
         String settlementId = SettlementIdGenerator.generate();
         settlementCreateDTO.setSettlementId(settlementId);
 
         //// STEP 3. 생성
-        // TODO : 생성
+        List<SettlementEntity> settlementEntityList = this.settlementConvertor.convertDTOToEntity(settlementCreateDTO);
+
+        //// STEP 4. DB INSERT
+        try {
+            this.settlementDataBiz.insertSettlement(settlementEntityList);
+
+        } catch(Exception e) {
+            throw new BizException("Failed to create settlement");
+
+        }
 
     }
+
+    /**
+     * 정산하기 수정
+     * @param userId 정산하기 수정 요청 사용자 ID
+     * @param settlementUpdateDTO 정산하기 수정 요청 데이터
+     */
+    public void updateSettlement(String userId, SettlementDTO settlementUpdateDTO) {
+        //// STEP 1. 정산 대상의 유효성 확인
+        if(!userId.equals(settlementUpdateDTO.getCreateUserId()))
+            throw new AccessDeniedException("User ID mismatch");
+
+        //// STEP 2. Entity Convert
+        List<SettlementEntity> settlementEntityList = this.settlementConvertor.convertDTOToEntity(settlementUpdateDTO);
+
+        //// STEP 3. DB UPDATE
+        try {
+            this.settlementDataBiz.updateSettlement(settlementEntityList);
+
+        } catch(Exception e) {
+            throw new BizException("Failed to update settlement");
+
+        }
+
+
+    }
+
 }
