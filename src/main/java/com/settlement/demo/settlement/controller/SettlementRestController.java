@@ -68,8 +68,10 @@ public class SettlementRestController {
     @PutMapping
     public ResponseEntity<?> updateSettlement(
             @RequestHeader(value = "X-USER-ID", required = true) String userId,
-            @RequestBody Object settlementUpdateRequest // TODO: Replace with actual update DTO
+            @RequestBody SettlementDTO settlementUpdateRequest
     ) {
+        this.settlementService.updateSettlement(userId, settlementUpdateRequest);
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body("Settlement updated successfully");

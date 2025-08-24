@@ -117,4 +117,30 @@ public class SettlementServiceImpl implements SettlementService {
         }
 
     }
+
+    /**
+     * 정산하기 수정
+     * @param userId 정산하기 수정 요청 사용자 ID
+     * @param settlementUpdateDTO 정산하기 수정 요청 데이터
+     */
+    public void updateSettlement(String userId, SettlementDTO settlementUpdateDTO) {
+        //// STEP 1. 정산 대상의 유효성 확인
+        settlementUpdateDTO.getTargetList().forEach(element -> {
+            // TODO : 정산 대상의 유효성 확인 로직 구현
+            // userId가 실제 유효한 Id인지 확인
+
+        });
+
+        //// STEP 2. 수정
+        List<SettlementEntity> settlementEntityList = this.settlementConvertor.convertDTOToEntity(settlementUpdateDTO);
+
+        //// STEP 3. DB UPDATE
+        try {
+            this.settlementDataBiz.updateSettlement(settlementEntityList);
+
+        } catch(Exception e) {
+            throw new BizException("Failed to update settlement");
+
+        }
+    }
 }
