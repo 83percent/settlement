@@ -28,5 +28,12 @@ public interface SettlementService {
      */
     void createSettlement(String userId, SettlementDTO settlementCreateDTO);
 
+    /**
+     * 정산하기 수정
+     * @param userId 정산하기 수정 요청 사용자 ID
+     * @param settlementUpdateDTO 정산하기 수정 요청 데이터
+     */
+    void updateSettlement(String userId, SettlementDTO settlementUpdateDTO);
+
 
 }

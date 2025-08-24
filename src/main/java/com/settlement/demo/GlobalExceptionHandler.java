@@ -1,11 +1,12 @@
 package com.settlement.demo;
 
+import com.settlement.demo.common.exception.BizException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.nio.file.AccessDeniedException;
 import java.util.NoSuchElementException;
 
 @ControllerAdvice
@@ -39,7 +40,7 @@ public class GlobalExceptionHandler {
                 .body("Internal server error: " + e.getMessage());
     }
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler({Exception.class, BizException.class})
     public ResponseEntity<String> handleException(Exception e) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
