@@ -11,6 +11,7 @@ import com.settlement.demo.settlement.service.SettlementService;
 import com.settlement.demo.settlement.util.SettlementIdGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -94,11 +95,8 @@ public class SettlementServiceImpl implements SettlementService {
     public void createSettlement(String userId, SettlementDTO settlementCreateDTO) {
 
         //// STEP 1. 정산 대상의 유효성 확인
-        settlementCreateDTO.getTargetList().forEach(element -> {
-            // TODO : 정산 대상의 유효성 확인 로직 구현
-            // userId가 실제 유효한 Id인지 확인
-
-        });
+        if(!userId.equals(settlementCreateDTO.getCreateUserId()))
+            throw new AccessDeniedException("User ID mismatch");
 
         //// STEP 2. 정산 ID 생성
         String settlementId = SettlementIdGenerator.generate();
@@ -125,13 +123,10 @@ public class SettlementServiceImpl implements SettlementService {
      */
     public void updateSettlement(String userId, SettlementDTO settlementUpdateDTO) {
         //// STEP 1. 정산 대상의 유효성 확인
-        settlementUpdateDTO.getTargetList().forEach(element -> {
-            // TODO : 정산 대상의 유효성 확인 로직 구현
-            // userId가 실제 유효한 Id인지 확인
+        if(!userId.equals(settlementUpdateDTO.getCreateUserId()))
+            throw new AccessDeniedException("User ID mismatch");
 
-        });
-
-        //// STEP 2. 수정
+        //// STEP 2. Entity Convert
         List<SettlementEntity> settlementEntityList = this.settlementConvertor.convertDTOToEntity(settlementUpdateDTO);
 
         //// STEP 3. DB UPDATE
@@ -142,5 +137,8 @@ public class SettlementServiceImpl implements SettlementService {
             throw new BizException("Failed to update settlement");
 
         }
+
+
     }
+
 }

@@ -25,7 +25,7 @@ public class SettlementRestController {
     @ApiResponse(responseCode = "200", description = "OK")
     @GetMapping("/")
     public ResponseEntity<List<SettlementDTO>> getSettlement(
-            @RequestHeader(value = "X-USER-ID", required = true) String userId
+            @RequestHeader(value = "X-USER-ID") String userId
     ) {
         return ResponseEntity
                 .status (HttpStatus.OK)
@@ -39,7 +39,7 @@ public class SettlementRestController {
     @ApiResponse(responseCode = "200", description = "OK")
     @GetMapping("/{settlementId}")
     public ResponseEntity<SettlementDTO> getSettlementById(
-            @RequestHeader(value = "X-USER-ID", required = true) String userId,
+            @RequestHeader(value = "X-USER-ID") String userId,
             @PathVariable("settlementId") String settlementId
     ) {
         return ResponseEntity
@@ -54,7 +54,7 @@ public class SettlementRestController {
     @ApiResponse(responseCode = "201", description = "Created")
     @PostMapping
     public ResponseEntity<SettlementDTO> createSettlement(
-            @RequestHeader(value = "X-USER-ID", required = true) String userId,
+            @RequestHeader(value = "X-USER-ID") String userId,
             @RequestBody SettlementDTO settlementCreateDTO
     ) {
 
@@ -67,7 +67,7 @@ public class SettlementRestController {
 
     @PutMapping
     public ResponseEntity<?> updateSettlement(
-            @RequestHeader(value = "X-USER-ID", required = true) String userId,
+            @RequestHeader(value = "X-USER-ID") String userId,
             @RequestBody SettlementDTO settlementUpdateRequest
     ) {
         this.settlementService.updateSettlement(userId, settlementUpdateRequest);
@@ -79,7 +79,7 @@ public class SettlementRestController {
 
     @DeleteMapping
     public ResponseEntity<?> deleteSettlement(
-            @RequestHeader(value = "X-USER-ID", required = true) String userId,
+            @RequestHeader(value = "X-USER-ID") String userId,
             @RequestParam("settlementId") String settlementId
     ) {
         // TODO : Settlement ID를 기반으로 '정산하기' 데이터 삭제
